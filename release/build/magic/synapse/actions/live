@@ -1,0 +1,94 @@
+BB=/system/xbin/busybox;
+DEVICE=/res/synapse/files/Glitch_flo.sh;
+
+read() {
+	T=/sys/kernel/msm_limiter/$1;
+	VALUE=-1;
+	NOW=`$BB cat $T`;
+	for LIM in $NOW; do
+		VALUE=$(($VALUE+1));
+		if [ "$VALUE" -eq $2 ]; then
+			$BB echo ${LIM:2};
+			return
+		fi;
+	done;
+}
+
+case $1 in
+	CPU_MAX_MIN_Freq)
+		$BB echo `sh $DEVICE DefaultCPUFrequency`;
+	;;
+	CPU_CUR_Freq)
+		$BB echo `sh $DEVICE DefaultCPUCURFrequency`;
+	;;
+	KSMStats)
+		KSM="$(expr `cat /sys/kernel/mm/ksm/run`)"
+		if [ KSM -eq "1" ]; then
+			SAVEDMEM=`echo "Saved memory: $((\`cat /sys/kernel/mm/ksm/pages_sharing\`*4096/1024/1024)) MB"`
+			SHARDMEM=`echo "Shared memory: $((\`cat /sys/kernel/mm/ksm/pages_shared\`*4096/1024/1024)) MB"`
+			echo $SAVEDMEM@n$SHARDMEM
+		else
+			echo KSM is Disabled.
+		fi
+	;;
+	BatteryTemperature)
+		$BB echo `sh $DEVICE LiveBatteryTemperature`;
+	;;
+	CPUFrequency)
+		$BB echo `sh $DEVICE LiveCPUFrequency`;
+	;;
+	CORESTATUS)
+		CORE_0="$(($(read live_cur_freq 0)/1000))MHz"
+		CORE_1="$(($(read live_cur_freq 1)/1000))MHz"
+		CORE_2="$(($(read live_cur_freq 2)/1000))MHz"
+		CORE_3="$(($(read live_cur_freq 3)/1000))MHz"
+		if [ $CORE_1 == "0MHz" ]; then
+			CORE_1=Offline
+		fi
+		if [ $CORE_2 == "0MHz" ]; then
+			CORE_2=Offline
+		fi
+		if [ $CORE_3 == "0MHz" ]; then
+			CORE_3=Offline
+		fi
+		echo CPU0: $CORE_0@nCPU1: $CORE_1@nCPU2: $CORE_2@nCPU3: $CORE_3
+	;;
+	SCALINGFREQ)
+		FREQMAX_0="$(($(read live_max_freq 0)/1000))MHz"
+		FREQMIN_0="$(($(read live_min_freq 0)/1000))MHz"
+		FREQMAX_1="$(($(read live_max_freq 1)/1000))MHz"
+		FREQMIN_1="$(($(read live_min_freq 1)/1000))MHz"
+		FREQMAX_2="$(($(read live_max_freq 2)/1000))MHz"
+		FREQMIN_2="$(($(read live_min_freq 2)/1000))MHz"
+		FREQMAX_3="$(($(read live_max_freq 3)/1000))MHz"
+		FREQMIN_3="$(($(read live_min_freq 3)/1000))MHz"
+		echo CPU0 - $FREQMAX_0 : $FREQMIN_0@nCPU1 - $FREQMAX_1 : $FREQMIN_1@nCPU2 - $FREQMAX_2 : $FREQMIN_2@nCPU3 - $FREQMAX_3 : $FREQMIN_3
+	;;
+	CPUTemperature)
+		$BB echo `sh $DEVICE LiveCPUTemperature`;
+	;;
+	GPUFrequency)
+		$BB echo `sh $DEVICE LiveGPUFrequency`;
+	;;
+	Memory)
+		$BB echo `sh $DEVICE LiveMemory`;
+	;;
+	Time)
+		$BB echo `sh $DEVICE LiveTime $2 $3`;
+	;;
+	UpTime)
+		$BB echo `sh $DEVICE LiveUpTime`;
+	;;
+	UnUsed)
+		$BB echo `sh $DEVICE LiveUnUsed`;
+	;;
+	WakelocksKernel)
+		$BB echo `sh $DEVICE LiveWakelocksKernel`;
+	;;
+	DefaultCPUGovernor)
+		$BB echo `sh $DEVICE LiveDefaultCPUGovernor`;
+	;;
+	CPU_HOTPLUG)
+		$BB echo `sh $DEVICE LiveCPU_HOTPLUG`;
+	;;
+esac

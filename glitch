@@ -11,7 +11,7 @@
 #################################################
 
 # Device options :
-	target_name="flo" #defines the device name/codename for config
+	target_name="duma" #defines the device name/codename for config
 	target_config=$target_name"_defconfig" #defines the device name/codename for config
 	target_device="N7-2013" #defines the name of device-related folders (can be the same as $target_name)
 

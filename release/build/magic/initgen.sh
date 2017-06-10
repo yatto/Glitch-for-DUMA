@@ -63,16 +63,16 @@ null="abc"
 
 #Permissive Selinux
 if [ "$PERMISSIVE" == "1" ]; then
-  echo "cmdline = console=ttyHSL0,115200,n8 androidboot.hardware=msm8960 user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 vmalloc=340M enforcing=0 androidboot.selinux=permissive" $l2_opt $vdd_uv $null >> /tmp/cmdline.cfg
+  echo "cmdline = console=ttyHSL0,115200,n8 androidboot.hardware=duma user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 vmalloc=340M enforcing=0 androidboot.selinux=permissive" $l2_opt $vdd_uv $null >> /tmp/cmdline.cfg
 else
-  echo "cmdline = console=ttyHSL0,115200,n8 androidboot.hardware=msm8960 user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 vmalloc=340M" $l2_opt $vdd_uv $null >> /tmp/cmdline.cfg
+  echo "cmdline = console=ttyHSL0,115200,n8 androidboot.hardware=duma user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 vmalloc=340M" $l2_opt $vdd_uv $null >> /tmp/cmdline.cfg
 fi
 
 ####################################################################
 
 echo "on early-init" >> $INIT
 echo "" >> $INIT
-echo "write /sys/class/graphics/fb0/rgb \"32768 32768 32768\"" >> $INIT
+#######  DUMA does not need this - echo "write /sys/class/graphics/fb0/rgb \"32768 32768 32768\"" >> $INIT
 echo "" >> $INIT
 echo "on boot" >> $INIT
 echo "" >> $INIT
